@@ -14,33 +14,33 @@ namespace CompanyBackend.Repositories
 
         public CompanyRepository(ICosmosDbDatabaseConnection connection)
         {
-            _databaseContainer = connection.Database.GetContainer("CompanyBackend");
+            _databaseContainer = connection.Container;
         }
 
-        public async Task<IEnumerable<CompanyModel>> GetCompanies()
+        public async Task<IEnumerable<CompanyModel>> GetCompaniesAsync()
         {
             return await _databaseContainer.GetItemLinqQueryable<CompanyModel>().ToFeedIterator().ReadNextAsync();
         }
 
-        public async Task<CompanyModel> GetCompany(Guid id)
+        public async Task<CompanyModel> GetCompanyAsync(Guid id)
         {
             return await _databaseContainer.ReadItemAsync<CompanyModel>(id.ToString(),
                 new PartitionKey(nameof(CompanyModel)));
         }
 
-        public async Task CreateCompany(CompanyModel company)
+        public async Task CreateCompanyAsync(CompanyModel company)
         {
             await _databaseContainer.CreateItemAsync(company, new PartitionKey(nameof(CompanyModel)),
                 GetRequestOptions(company));
         }
 
-        public async Task UpdateCompany(CompanyModel company)
+        public async Task UpdateCompanyAsync(CompanyModel company)
         {
             await _databaseContainer.UpsertItemAsync(company, new PartitionKey(nameof(CompanyModel)),
                 GetRequestOptions(company));
         }
 
-        public async Task DeleteCompany(Guid id)
+        public async Task DeleteCompanyAsync(Guid id)
         {
             await _databaseContainer.DeleteItemAsync<CompanyModel>(id.ToString(),
                 new PartitionKey(nameof(CompanyModel)));

@@ -6,6 +6,7 @@ namespace CompanyBackend.Repositories.Interfaces
     public interface ICosmosDbDatabaseConnection
     {
         Database Database { get; }
+        Container Container { get; }
         Task EnsureDatabaseExistsAsync();
         Task EnsureContainerExistsAsync();
     }

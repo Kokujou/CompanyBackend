@@ -15,6 +15,7 @@ namespace CompanyBackend.Repositories
         private readonly string _containerName;
 
         public Database Database { get; }
+        public Container Container { get; }
 
         public CosmosDbDatabaseConnection(IConfiguration configuration)
         {
@@ -26,6 +27,7 @@ namespace CompanyBackend.Repositories
             _databaseName = configuration.GetValue<string>("Cosmos:DatabaseName");
             _containerName = configuration.GetValue<string>("Cosmos:ContainerName");
             Database = _client.GetDatabase(_databaseName);
+            Container = Database.GetContainer(_containerName);
         }
 
         public async Task EnsureDatabaseExistsAsync()

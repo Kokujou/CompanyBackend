@@ -20,11 +20,11 @@ namespace CompanyBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CompanyModel>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CompanyModel>>> GetAllAsync()
         {
             try
             {
-                return Ok(await _companyRepository.GetCompanies());
+                return Ok(await _companyRepository.GetCompaniesAsync());
             }
             catch (CosmosException e)
             {
@@ -41,7 +41,7 @@ namespace CompanyBackend.Controllers
         {
             try
             {
-                return Ok(await _companyRepository.GetCompany(id));
+                return Ok(await _companyRepository.GetCompanyAsync(id));
             }
             catch (CosmosException e)
             {
@@ -58,8 +58,8 @@ namespace CompanyBackend.Controllers
         {
             try
             {
-                await _companyRepository.CreateCompany(model);
-                return Ok();
+                await _companyRepository.CreateCompanyAsync(model);
+                return CreatedAtAction("Get", new {id = model.Id}, model);
             }
             catch (CosmosException e)
             {
@@ -71,13 +71,15 @@ namespace CompanyBackend.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateAsync([FromBody] CompanyModel model)
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult> UpdateAsync([FromBody] CompanyModel model, Guid id)
         {
             try
             {
-                await _companyRepository.UpdateCompany(model);
-                return Ok();
+                if (id != model.Id) return BadRequest("the ids of the objects do not match!");
+                var test = await _companyRepository.GetCompanyAsync(id);
+                await _companyRepository.UpdateCompanyAsync(model);
+                return NoContent();
             }
             catch (CosmosException e)
             {
@@ -94,8 +96,8 @@ namespace CompanyBackend.Controllers
         {
             try
             {
-                await _companyRepository.DeleteCompany(id);
-                return Ok();
+                await _companyRepository.DeleteCompanyAsync(id);
+                return NoContent();
             }
             catch (CosmosException e)
             {
